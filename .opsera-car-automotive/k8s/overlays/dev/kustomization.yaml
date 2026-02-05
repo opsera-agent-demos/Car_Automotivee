@@ -15,11 +15,11 @@ labels:
 
 images:
   - name: car-automotive-frontend
-    newName: PLACEHOLDER_ECR_URI/opsera/car-automotive-frontend
-    newTag: latest
+    newName: 792373136340.dkr.ecr.us-west-2.amazonaws.com/opsera/car-automotive-frontend
+    newTag: 3487d14-20260205050435
   - name: car-automotive-backend
-    newName: PLACEHOLDER_ECR_URI/opsera/car-automotive-backend
-    newTag: latest
+    newName: 792373136340.dkr.ecr.us-west-2.amazonaws.com/opsera/car-automotive-backend
+    newTag: 3487d14-20260205050435
 
 patches:
   # Update ingress host for dev environment
