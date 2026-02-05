@@ -2,6 +2,185 @@
 
 A modern, production-ready full-stack car automotive platform built with React, Node.js, Express, and MongoDB.
 
+---
+
+## 🚀 Deployment Landscape
+
+```
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                                      ║
+║     ██████╗  █████╗ ██████╗       █████╗ ██╗   ██╗████████╗ ██████╗ ███╗   ███╗ ██████╗ ████████╗   ║
+║    ██╔════╝ ██╔══██╗██╔══██╗     ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗████╗ ████║██╔═══██╗╚══██╔══╝   ║
+║    ██║      ███████║██████╔╝     ███████║██║   ██║   ██║   ██║   ██║██╔████╔██║██║   ██║   ██║      ║
+║    ██║      ██╔══██║██╔══██╗     ██╔══██║██║   ██║   ██║   ██║   ██║██║╚██╔╝██║██║   ██║   ██║      ║
+║    ╚██████╗ ██║  ██║██║  ██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚═╝ ██║╚██████╔╝   ██║      ║
+║     ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝     ╚═╝ ╚═════╝    ╚═╝      ║
+║                                                                                                      ║
+║                              DEPLOYMENT LANDSCAPE                                                    ║
+║                                                                                                      ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║  Application: car-automotive       Tenant: opsera           Region: us-west-2                        ║
+║  Generated: 2026-02-05             Powered by: Opsera Code-to-Cloud Enterprise v0.917                ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════╝
+```
+
+### Environment Status
+
+| Environment | URL | Status | Strategy | Replicas |
+|-------------|-----|--------|----------|----------|
+| **DEV** | [opsera-car-automotive-dev.agent.opsera.dev](https://opsera-car-automotive-dev.agent.opsera.dev) | ✅ Active | Rolling | 2 |
+
+### Infrastructure Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              ARCHITECTURE DIAGRAM                                    │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│    ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                      │
+│    │   GitHub     │────▶│  GitHub      │────▶│   AWS ECR    │                      │
+│    │   (Source)   │     │  Actions     │     │  (Registry)  │                      │
+│    └──────────────┘     └──────────────┘     └──────────────┘                      │
+│           │                    │                    │                               │
+│           │                    │                    ▼                               │
+│           │              ┌─────┴─────┐     ┌──────────────┐                        │
+│           │              │           │     │   ArgoCD     │                        │
+│           │              │  Gitleaks │     │   (GitOps)   │                        │
+│           │              │  + Grype  │     │  Hub Cluster │                        │
+│           │              │           │     └──────────────┘                        │
+│           │              └───────────┘            │                                │
+│           │                                       │                                │
+│           ▼                                       ▼                                │
+│    ┌──────────────┐                      ┌──────────────┐                         │
+│    │ Kustomize    │◀─────────────────────│    EKS       │                         │
+│    │ Manifests    │                      │ Spoke Cluster│                         │
+│    └──────────────┘                      └──────────────┘                         │
+│                                                 │                                  │
+│                                    ┌────────────┼────────────┐                    │
+│                                    ▼            ▼            ▼                    │
+│                             ┌──────────┐ ┌──────────┐ ┌──────────┐               │
+│                             │ Frontend │ │ Backend  │ │ Ingress  │               │
+│                             │  (Nginx) │ │ (Node.js)│ │ (nginx)  │               │
+│                             └──────────┘ └──────────┘ └──────────┘               │
+│                                                                                   │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### CI/CD Pipeline
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                               CI/CD PIPELINE FLOW                                    │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐         │
+│   │  Push   │───▶│ Gitleaks│───▶│  Build  │───▶│  Grype  │───▶│  Push   │         │
+│   │  Code   │    │  Scan   │    │  Image  │    │  Scan   │    │  ECR    │         │
+│   └─────────┘    └─────────┘    └─────────┘    └─────────┘    └─────────┘         │
+│                                                                     │              │
+│                                                                     ▼              │
+│   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐         │
+│   │  Live   │◀───│ ArgoCD  │◀───│  Apply  │◀───│  Commit │◀───│ Update  │         │
+│   │   App   │    │  Sync   │    │Manifests│    │  Push   │    │  Tags   │         │
+│   └─────────┘    └─────────┘    └─────────┘    └─────────┘    └─────────┘         │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Quick Links
+
+| Resource | Link |
+|----------|------|
+| **Application** | [https://opsera-car-automotive-dev.agent.opsera.dev](https://opsera-car-automotive-dev.agent.opsera.dev) |
+| **GitHub Repo** | [opsera-agent-demos/Car_Automotivee](https://github.com/opsera-agent-demos/Car_Automotivee) |
+| **ArgoCD** | [argocd-usw2.agent.opsera.dev](https://argocd-usw2.agent.opsera.dev) |
+| **ECR Frontend** | `792373136340.dkr.ecr.us-west-2.amazonaws.com/opsera/car-automotive-frontend` |
+| **ECR Backend** | `792373136340.dkr.ecr.us-west-2.amazonaws.com/opsera/car-automotive-backend` |
+
+### Recent Deployments
+
+| Date | Commit | Environment | Status |
+|------|--------|-------------|--------|
+| 2026-02-05 | `4f42ace` | DEV | ✅ Success |
+| 2026-02-05 | `5738628` | DEV | ✅ Success |
+| 2026-02-05 | `402b48a` | DEV | ✅ Success |
+| 2026-02-05 | `3487d14` | DEV | ✅ Success |
+
+### GitHub Actions Workflows
+
+| Workflow | Purpose | Trigger |
+|----------|---------|---------|
+| [CI Build & Push (DEV)](../../actions/workflows/ci-build-push-car-automotive-dev.yaml) | Build, scan, push images, deploy | Push to main/car-automotive |
+| [Bootstrap Infrastructure](../../actions/workflows/bootstrap-car-automotive.yaml) | Create ECR repos, namespaces, ArgoCD apps | Manual |
+| [Verify Pods](../../actions/workflows/verify-pods-car-automotive.yaml) | Debug: Check pod status | Manual |
+| [Test URLs](../../actions/workflows/test-urls-car-automotive.yaml) | Debug: Test application URLs | Manual |
+| [Diagnostics](../../actions/workflows/diagnostics-car-automotive.yaml) | Full pipeline diagnostics | Manual |
+| [ArgoCD Sync](../../actions/workflows/argocd-sync-car-automotive.yaml) | Force ArgoCD sync | Manual |
+
+---
+
+## 📁 Opsera Infrastructure Files
+
+```
+.opsera-car-automotive/
+├── argocd/
+│   └── dev/
+│       └── application.yaml          # ArgoCD Application manifest
+├── k8s/
+│   ├── base/
+│   │   ├── kustomization.yaml        # Base Kustomize config
+│   │   ├── frontend-deployment.yaml  # Frontend Deployment
+│   │   ├── frontend-service.yaml     # Frontend Service
+│   │   ├── backend-deployment.yaml   # Backend Deployment
+│   │   ├── backend-service.yaml      # Backend Service
+│   │   └── ingress.yaml              # Ingress configuration
+│   └── overlays/
+│       └── dev/
+│           ├── kustomization.yaml    # Dev overlay with image tags
+│           └── namespace.yaml        # Namespace definition
+├── Dockerfiles/
+│   ├── Dockerfile.frontend           # React/Nginx Dockerfile
+│   └── Dockerfile.backend            # Node.js Dockerfile
+├── nginx.conf                        # Nginx configuration (port 8080)
+├── SKILL-COMPLETE-v0.915.md          # Session learnings & fixes
+└── LEARNINGS-2026-02-05.md           # Deployment learnings
+```
+
+---
+
+## 🔧 Deployment Configuration
+
+### Kubernetes Resources
+
+| Resource | Name | Namespace |
+|----------|------|-----------|
+| Namespace | `opsera-car-automotive-dev` | - |
+| Deployment | `car-automotive-frontend` | `opsera-car-automotive-dev` |
+| Deployment | `car-automotive-backend` | `opsera-car-automotive-dev` |
+| Service | `car-automotive-frontend` | `opsera-car-automotive-dev` |
+| Service | `car-automotive-backend` | `opsera-car-automotive-dev` |
+| Ingress | `car-automotive` | `opsera-car-automotive-dev` |
+
+### Container Configuration
+
+| Component | Image | Port | UID | Health Check |
+|-----------|-------|------|-----|--------------|
+| Frontend | `nginx-unprivileged:alpine` | 8080 | 101 | `GET /` |
+| Backend | `node:20-alpine` | 8080 | 1001 | `GET /api/health` |
+
+### ArgoCD Configuration
+
+```yaml
+Application: car-automotive-dev
+Repository: https://github.com/opsera-agent-demos/Car_Automotivee.git
+Branch: car-automotive
+Path: .opsera-car-automotive/k8s/overlays/dev
+Destination: opsera-usw2-np (spoke cluster)
+Sync Policy: Automated (prune + selfHeal)
+```
+
+---
+
 ## 🚀 Features
 
 ### User Features
@@ -97,6 +276,15 @@ car-automotive/
 │   ├── package.json
 │   ├── tailwind.config.js
 │   └── vite.config.js
+│
+├── .opsera-car-automotive/     # Opsera CI/CD Infrastructure
+│   ├── argocd/
+│   ├── k8s/
+│   ├── Dockerfiles/
+│   └── nginx.conf
+│
+├── .github/
+│   └── workflows/              # GitHub Actions CI/CD
 │
 └── README.md
 ```
@@ -296,5 +484,6 @@ Built with ❤️ for car automotive enthusiasts
 
 ---
 
-**Note**: Make sure to set up your environment variables properly before running the application. For production, use secure secrets and enable HTTPS.
+**Deployment powered by [Opsera Code-to-Cloud Enterprise v0.917](https://opsera.io)**
 
+**Note**: Make sure to set up your environment variables properly before running the application. For production, use secure secrets and enable HTTPS.
