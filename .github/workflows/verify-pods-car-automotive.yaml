@@ -51,10 +51,10 @@ jobs:
         run: |
           NAMESPACE="${{ env.TENANT }}-${{ env.APP_NAME }}-${{ inputs.environment }}"
 
-          echo "### Pod Status in $NAMESPACE" >> $GITHUB_STEP_SUMMARY
+          echo "### Pod Status in $NAMESPACE" | tee -a $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          kubectl get pods -n $NAMESPACE -o wide >> $GITHUB_STEP_SUMMARY
+          kubectl get pods -n $NAMESPACE -o wide 2>&1 | tee -a $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Get Pod Logs (last 50 lines)
