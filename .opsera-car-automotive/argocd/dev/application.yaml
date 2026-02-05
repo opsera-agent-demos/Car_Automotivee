@@ -1,0 +1,29 @@
+# ArgoCD Application for car-automotive DEV environment
+# RULE 59: Use destination.name for hub-spoke, NOT destination.server
+# RULE 149: NEVER use https://kubernetes.default.svc (deploys to hub!)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: car-automotive-dev
+  namespace: argocd
+  labels:
+    app: car-automotive
+    environment: dev
+    tenant: opsera
+spec:
+  project: default
+  source:
+    repoURL: PLACEHOLDER_REPO_URL
+    targetRevision: main
+    path: .opsera-car-automotive/k8s/overlays/dev
+  destination:
+    # RULE 149: Use spoke cluster name, NOT server URL
+    name: opsera-usw2-np
+    namespace: opsera-car-automotive-dev
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true  # RULE 109: Required for field changes
+    automated:
+      prune: true
+      selfHeal: true

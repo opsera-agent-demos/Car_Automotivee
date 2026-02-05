@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-automotive-backend
+  labels:
+    app: car-automotive
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: car-automotive
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: car-automotive
+        component: backend
+    spec:
+      containers:
+        - name: backend
+          image: car-automotive-backend:latest
+          ports:
+            # RULE 74b: Port 8080 for non-root containers
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: NODE_ENV
+              value: "production"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false

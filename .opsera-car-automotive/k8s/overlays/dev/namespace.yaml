@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opsera-car-automotive-dev
+  labels:
+    app: car-automotive
+    environment: dev
+    tenant: opsera

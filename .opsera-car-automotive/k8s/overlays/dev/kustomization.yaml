@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: opsera-car-automotive-dev
+
+resources:
+  - ../../base
+  - namespace.yaml
+
+# RULE 106: Use labels with includeSelectors: false, NOT commonLabels
+labels:
+  - pairs:
+      environment: dev
+    includeSelectors: false
+
+images:
+  - name: car-automotive-frontend
+    newName: PLACEHOLDER_ECR_URI/opsera/car-automotive-frontend
+    newTag: latest
+  - name: car-automotive-backend
+    newName: PLACEHOLDER_ECR_URI/opsera/car-automotive-backend
+    newTag: latest
+
+patches:
+  # Update ingress host for dev environment
+  - target:
+      kind: Ingress
+      name: car-automotive
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: opsera-car-automotive-dev.agent.opsera.dev

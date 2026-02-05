@@ -1,0 +1,43 @@
+# Multi-stage build for Node.js backend
+# RULE 74b: Use port 8080 for non-root containers in Kubernetes
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# RULE 73: Use npm install --legacy-peer-deps instead of npm ci
+RUN npm install --legacy-peer-deps --only=production && npm cache clean --force
+
+# Production stage
+FROM node:20-alpine
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy dependencies from builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy application code
+COPY . .
+
+# Change ownership to non-root user
+RUN chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
+
+# RULE 74b: Use port 8080 for non-root containers
+ENV PORT=8080
+EXPOSE 8080
+
+# Health check on port 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:8080/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Start application
+CMD ["node", "server.js"]
