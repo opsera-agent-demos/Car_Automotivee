@@ -14,7 +14,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/opsera-agent-demos/Car_Automotivee.git
-    targetRevision: main
+    targetRevision: car-automotive
     path: .opsera-car-automotive/k8s/overlays/dev
   destination:
     # RULE 149: Use spoke cluster name, NOT server URL
