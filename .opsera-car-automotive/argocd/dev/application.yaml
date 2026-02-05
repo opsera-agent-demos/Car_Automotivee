@@ -13,7 +13,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: PLACEHOLDER_REPO_URL
+    repoURL: https://github.com/opsera-agent-demos/Car_Automotivee.git
     targetRevision: main
     path: .opsera-car-automotive/k8s/overlays/dev
   destination:
