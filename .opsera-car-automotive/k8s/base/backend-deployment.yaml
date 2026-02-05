@@ -49,5 +49,7 @@ spec:
             periodSeconds: 30
           securityContext:
             runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
